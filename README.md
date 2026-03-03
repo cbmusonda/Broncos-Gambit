@@ -6,7 +6,7 @@ This repository contains the code for our Chess Robot project, developed for the
 
 
 
-Authers:
+Authors:
 cirena
 heba
 jessalin
