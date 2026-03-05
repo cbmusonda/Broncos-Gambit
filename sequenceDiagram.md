@@ -9,4 +9,14 @@ sequenceDiagram
     participant Rule as RuleChecker (isSquareAttacked / inCheck)
     participant MoveObj as Move (Move.fromUco / toUCI)
 
+   %%Note over Host,Engine: Engine runs a UCI stdin/stdout loop
+
+   Host ->> Engine: "uci"
+   activate Engine
+   Engine ->> Engine: parse "uci"
+   Engine -->> Host: "id name <engine>"
+   Engine -->> Host: "id author <author>"
+   Engine -->> Host: "uciok"
+   deactivate Engine
+
 ``` 
