@@ -31,4 +31,13 @@ sequenceDiagram
     Engine -->> Host: (ack no response required)
     deactivate Engine
 
+    Host -->Engine "go movetime 10000"
+    activate Engine
+    Engine --> Position: legalMoves()
+        Position ->> MoveGen: generate PsuedoLegal()
+        MoveGen --> Engine: return legalMoves list
+        Position --> Rule: filterLegal()
+        Rule -->> Position: legalMoves
+        Position --> Engine: legalMoves()
+    deactivate MoveGen
 ``` 
