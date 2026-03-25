@@ -175,31 +175,38 @@ static void gen_pawn(const Pos *p, int from, int white, Move *moves, int *n) {
 }
 
 static void gen_knight(const Pos *p, int from, int white, Move *moves, int *n) {
-    static const int offset[8] = {-17, -15, -10, -6, 6, 10, 15, 17};
-    static const int size = sizeof(offset)/sizeof(int);
+    static const int nd[8] = {-17, -15, -10, -6, 6, 10, 15, 17};
+    static const int size = sizeof(nd)/sizeof(int);
     int to, to_col, to_row, from_col, from_row, col_distance, row_distance;
 
-    from_col = from % 8;
-    from_row = from / 8;
+    int us_white = p->white_to_move;
+    
+    from_col = from % 8; //current position column
+    from_row = from / 8; // current position row
 
-    //check through each possible to-position, make sure it creates L-shape
+    //check through each possible to-position, make sure it's valid
     for (size_t i = 0; i < size; i++) {
-        to = from + offset[i];
+        to = from + nd[i]; // calculate new knight sqaure
+        
+        if (to < 0 || to > 63) continue; //check within array bounds
+        
+        int white = is_white_piece(p->b[to]);
+        if ((p->b[to] != '.') && (white == us_white)) continue; //make sure there is no friendly pieces in the new square
+        
+        to_col = to % 8; //find new move column
+        to_row = to / 8; // find new move row
 
-        if (to < 0 || to > 63) continue;
-
-        to_col = to % 8;
-        to_row = to / 8;
-        col_distance = abs(from_col - to_col);
+        //calculate column and row distance from current square
+        col_distance = abs(from_col - to_col); 
         row_distance = abs(from_row - to_row);
-
+        
+        //add new move to list of moves
         if ((col_distance == 1 && row_distance == 2) ||
             (col_distance == 2 && row_distance == 1)) {
-            (*n)++;
+            add_move(moves, n, from, to, 0);
         }
     }
 }
-
 static void gen_queen(const Pos *p, int from, int white, const int dirs[][2], int dcount, Move *moves, int *n) {
 
 }
