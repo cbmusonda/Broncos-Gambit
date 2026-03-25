@@ -193,7 +193,7 @@ static void gen_pawn(const Pos *p, int from, int white, Move *moves, int *n)
 
     // Single push 
     int to = from + dir * 8;
-    if (p->b[to] == '.') 
+    if (to >= 0 && to < 64 && p->b[to] == '.') 
     {
         if (row == promo_row) 
         {
@@ -209,7 +209,7 @@ static void gen_pawn(const Pos *p, int from, int white, Move *moves, int *n)
         if (row == start_row) 
         {
             int to2 = from + dir * 16;
-            if (p->b[to2] == '.') 
+            if (to2 >= 0 && to2 < 64 && p->b[to2] == '.') 
             {
                 add_move(moves, n, from, to2, 0);
             }
