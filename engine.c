@@ -170,8 +170,76 @@ static void add_move(Move *moves, int *n, int from, int to, char promo) {
     (*n)++;
 }
 
-static void gen_pawn(const Pos *p, int from, int white, Move *moves, int *n) {
+static void gen_pawn(const Pos *p, int from, int white, Move *moves, int *n) 
+{
+    int row, column, dir, start_row, promo_row;
 
+    row    = from / 8;
+    column = from % 8;
+
+    if (white == 1) 
+    {
+        dir       = 1;
+        start_row = 1;
+        promo_row = 6;
+    } 
+    
+    else 
+    {
+        dir       = -1;
+        start_row = 6;
+        promo_row = 1;
+    }
+
+    // Single push 
+    int to = from + dir * 8;
+    if (to >= 0 && to < 64 && p->b[to] == '.') 
+    {
+        if (row == promo_row) 
+        {
+            add_move(moves, n, from, to, 'q');
+        } 
+        
+        else 
+        {
+            add_move(moves, n, from, to, 0);
+        }
+
+        // Double push (only possible if single push was clear)
+        if (row == start_row) 
+        {
+            int to2 = from + dir * 16;
+            if (to2 >= 0 && to2 < 64 && p->b[to2] == '.') 
+            {
+                add_move(moves, n, from, to2, 0);
+            }
+        }
+    }
+
+    // Captures 
+    int cap_columns[2] = { column - 1, column + 1 };
+    
+    for (int i = 0; i < 2; i++) 
+    {
+        int cc = cap_columns[i];
+        if (cc < 0 || cc > 7) continue;
+
+        int cap_sq = from + dir * 8 + (cc - column);
+        char target = p->b[cap_sq];
+
+        if (target == '.') continue;
+        if (is_white_piece(target) == white) continue;
+
+        if (row == promo_row) 
+        {
+            add_move(moves, n, from, cap_sq, 'q');
+        } 
+        
+        else 
+        {
+            add_move(moves, n, from, cap_sq, 0);
+        }
+    }
 }
 
 static void gen_knight(const Pos *p, int from, int white, Move *moves, int *n) {
