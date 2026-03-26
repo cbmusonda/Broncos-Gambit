@@ -276,7 +276,36 @@ static void gen_knight(const Pos *p, int from, int white, Move *moves, int *n) {
     }
 }
 static void gen_queen(const Pos *p, int from, int white, const int dirs[][2], int dcount, Move *moves, int *n) {
+    int r = from / 8;
+    int f = from % 8;
+    //converting row and column
 
+   //loop through directions
+    for (int i = 0; i < dcount; i++) {
+        int df = dirs[i][0]; //change left/right
+        int dr = dirs[i][1]; //change up/down
+    
+        int cr = r + dr; //current row, move 1 box in the direction
+        int cf = f + df; //current column, move 1 box in the direction
+
+        //stay within the board so move till it hits an edge or piece
+        while (cr >= 0 && cr < 8 && cf >= 0 && cf < 8) {
+            int to = cr * 8 + cf; //convert back to index
+            char target = p->b[to]; //check if theres a piece on the square
+
+            if (target == '.') { //empty square
+                add_move(moves, n, from, to, 0); //add move and keep going
+            } else {
+                if (is_white_piece(target) != white) { //enemy piece, can capture but stop after
+                    add_move(moves, n, from, to, 0); 
+                }
+                break; //stop after hitting any piece, whether we captured or not
+            }
+            //move further in the same direction
+            cr += dr;
+            cf += df;
+        }
+    }
 }
 
 static void gen_bishop(const Pos *p, int from, int white, const int dirs[][2], int dcount, Move *moves, int *n) {
