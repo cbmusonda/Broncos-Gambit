@@ -216,7 +216,37 @@ static void gen_bishop(const Pos *p, int from, int white, const int dirs[][2], i
 }
 
 static void gen_rook(const Pos *p, int from, int white, const int dirs[][2], int dcount, Move *moves, int *n) {
+    int from_file = from % 8;
+    int from_rank = from / 8;
 
+    // loop through each direction the rook can slide (up, down, left, right)
+    for (int d = 0; d < dcount; d++) {
+        int df = dirs[d][0]; // file delta
+        int dr = dirs[d][1]; // rank delta
+
+        int cf = from_file + df;
+        int cr = from_rank + dr;
+
+        // keep going until we hit the edge of the board
+        while (cf >= 0 && cf < 8 && cr >= 0 && cr < 8) {
+            int to = cr * 8 + cf;
+            char target = p->b[to];
+
+            if (target == '.') {
+                // empty square, rook can move here, keep sliding
+                add_move(moves, n, from, to, 0);
+            } else {
+                // hit a piece, capture if its the enemy then stop either way
+                if (is_white_piece(target) != white) {
+                    add_move(moves, n, from, to, 0);
+                }
+                break;
+            }
+
+            cf += df;
+            cr += dr;
+        }
+    }
 }
 
 static void gen_king(const Pos *p, int from, int white, Move *moves, int *n) {
