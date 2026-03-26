@@ -221,6 +221,29 @@ static void gen_rook(const Pos *p, int from, int white, const int dirs[][2], int
 
 static void gen_king(const Pos *p, int from, int white, Move *moves, int *n) {
 
+    
+    static const int dirs[8][2] = {
+        {1,0},{-1,0},{0,1},{0,-1},
+        {1,1},{1,-1},{-1,1},{-1,-1}
+    };
+
+    int from_row = from / 8;
+    int from_col = from % 8;
+
+    for (int i = 0; i < 8; i++) {
+        int to_row = from_row + dirs[i][1];
+        int to_col = from_col + dirs[i][0];
+
+        if (to_row < 0 || to_row > 7 || to_col < 0 || to_col > 7) continue;
+
+        int to = to_row * 8 + to_col;
+
+        char target = p->b[to];
+        if (target != '.' && is_white_piece(target) == white) continue;
+
+        add_move(moves, n, from, to, 0);
+    }
+
 }
 
 static int pseudo_legal_moves(const Pos *p, Move *moves) {
