@@ -309,7 +309,33 @@ static void gen_queen(const Pos *p, int from, int white, const int dirs[][2], in
 }
 
 static void gen_bishop(const Pos *p, int from, int white, const int dirs[][2], int dcount, Move *moves, int *n) {
+    int from_file = from % 8;
+    int from_rank = from / 8;
 
+    for (int d = 0; d < dcount; d++){
+        int df = dirs[d][0];
+        int dr = dirs[d][1];
+
+        int cf = from_file + df;
+        int cr = from_rank + dr;
+
+        while(cf >= 0 && cf < 8 && cr >= 0 && cr < 8){
+            int to = cr * 8 + cf;
+            char target = p->b[to];
+
+            if(target == '.'){
+                add_move(moves, n, from, to, 0);
+            }
+            else{
+                if(is_white_piece(target) != white){
+                     add_move(moves, n, from, to, 0);   
+                }
+                break;
+            }
+            cf += df;
+            cr += dr;
+        }
+    }
 }
 
 static void gen_rook(const Pos *p, int from, int white, const int dirs[][2], int dcount, Move *moves, int *n) {
