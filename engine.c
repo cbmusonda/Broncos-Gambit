@@ -170,42 +170,172 @@ static void add_move(Move *moves, int *n, int from, int to, char promo) {
     (*n)++;
 }
 
-static void gen_pawn(const Pos *p, int from, int white, Move *moves, int *n) {
+static void gen_pawn(const Pos *p, int from, int white, Move *moves, int *n) 
+{
+    int row, column, dir, start_row, promo_row;
 
-}
+    row    = from / 8;
+    column = from % 8;
 
-static void gen_knight(const Pos *p, int from, int white, Move *moves, int *n) {
-    static const int offset[8] = {-17, -15, -10, -6, 6, 10, 15, 17};
-    static const int size = sizeof(offset)/sizeof(int);
-    int to, to_col, to_row, from_col, from_row, col_distance, row_distance;
+    if (white == 1) 
+    {
+        dir       = 1;
+        start_row = 1;
+        promo_row = 6;
+    } 
+    
+    else 
+    {
+        dir       = -1;
+        start_row = 6;
+        promo_row = 1;
+    }
 
-    from_col = from % 8;
-    from_row = from / 8;
+    // Single push 
+    int to = from + dir * 8;
+    if (to >= 0 && to < 64 && p->b[to] == '.') 
+    {
+        if (row == promo_row) 
+        {
+            add_move(moves, n, from, to, 'q');
+        } 
+        
+        else 
+        {
+            add_move(moves, n, from, to, 0);
+        }
 
-    //check through each possible to-position, make sure it creates L-shape
-    for (size_t i = 0; i < size; i++) {
-        to = from + offset[i];
+        // Double push (only possible if single push was clear)
+        if (row == start_row) 
+        {
+            int to2 = from + dir * 16;
+            if (to2 >= 0 && to2 < 64 && p->b[to2] == '.') 
+            {
+                add_move(moves, n, from, to2, 0);
+            }
+        }
+    }
 
-        if (to < 0 || to > 63) continue;
+    // Captures 
+    int cap_columns[2] = { column - 1, column + 1 };
+    
+    for (int i = 0; i < 2; i++) 
+    {
+        int cc = cap_columns[i];
+        if (cc < 0 || cc > 7) continue;
 
-        to_col = to % 8;
-        to_row = to / 8;
-        col_distance = abs(from_col - to_col);
-        row_distance = abs(from_row - to_row);
+        int cap_sq = from + dir * 8 + (cc - column);
+        char target = p->b[cap_sq];
 
-        if ((col_distance == 1 && row_distance == 2) ||
-            (col_distance == 2 && row_distance == 1)) {
-            (*n)++;
+        if (target == '.') continue;
+        if (is_white_piece(target) == white) continue;
+
+        if (row == promo_row) 
+        {
+            add_move(moves, n, from, cap_sq, 'q');
+        } 
+        
+        else 
+        {
+            add_move(moves, n, from, cap_sq, 0);
         }
     }
 }
 
-static void gen_queen(const Pos *p, int from, int white, const int dirs[][2], int dcount, Move *moves, int *n) {
+static void gen_knight(const Pos *p, int from, int white, Move *moves, int *n) {
+    static const int nd[8] = {-17, -15, -10, -6, 6, 10, 15, 17};
+    static const int size = sizeof(nd)/sizeof(int);
+    int to, to_col, to_row, from_col, from_row, col_distance, row_distance;
 
+    int us_white = p->white_to_move;
+    
+    from_col = from % 8; //current position column
+    from_row = from / 8; // current position row
+
+    //check through each possible to-position, make sure it's valid
+    for (size_t i = 0; i < size; i++) {
+        to = from + nd[i]; // calculate new knight sqaure
+        
+        if (to < 0 || to > 63) continue; //check within array bounds
+        
+        int white = is_white_piece(p->b[to]);
+        if ((p->b[to] != '.') && (white == us_white)) continue; //make sure there is no friendly pieces in the new square
+        
+        to_col = to % 8; //find new move column
+        to_row = to / 8; // find new move row
+
+        //calculate column and row distance from current square
+        col_distance = abs(from_col - to_col); 
+        row_distance = abs(from_row - to_row);
+        
+        //add new move to list of moves
+        if ((col_distance == 1 && row_distance == 2) ||
+            (col_distance == 2 && row_distance == 1)) {
+            add_move(moves, n, from, to, 0);
+        }
+    }
+}
+static void gen_queen(const Pos *p, int from, int white, const int dirs[][2], int dcount, Move *moves, int *n) {
+    int r = from / 8;
+    int f = from % 8;
+    //converting row and column
+
+   //loop through directions
+    for (int i = 0; i < dcount; i++) {
+        int df = dirs[i][0]; //change left/right
+        int dr = dirs[i][1]; //change up/down
+    
+        int cr = r + dr; //current row, move 1 box in the direction
+        int cf = f + df; //current column, move 1 box in the direction
+
+        //stay within the board so move till it hits an edge or piece
+        while (cr >= 0 && cr < 8 && cf >= 0 && cf < 8) {
+            int to = cr * 8 + cf; //convert back to index
+            char target = p->b[to]; //check if theres a piece on the square
+
+            if (target == '.') { //empty square
+                add_move(moves, n, from, to, 0); //add move and keep going
+            } else {
+                if (is_white_piece(target) != white) { //enemy piece, can capture but stop after
+                    add_move(moves, n, from, to, 0); 
+                }
+                break; //stop after hitting any piece, whether we captured or not
+            }
+            //move further in the same direction
+            cr += dr;
+            cf += df;
+        }
+    }
 }
 
 static void gen_bishop(const Pos *p, int from, int white, const int dirs[][2], int dcount, Move *moves, int *n) {
+    int from_file = from % 8;
+    int from_rank = from / 8;
 
+    for (int d = 0; d < dcount; d++){
+        int df = dirs[d][0];
+        int dr = dirs[d][1];
+
+        int cf = from_file + df;
+        int cr = from_rank + dr;
+
+        while(cf >= 0 && cf < 8 && cr >= 0 && cr < 8){
+            int to = cr * 8 + cf;
+            char target = p->b[to];
+
+            if(target == '.'){
+                add_move(moves, n, from, to, 0);
+            }
+            else{
+                if(is_white_piece(target) != white){
+                     add_move(moves, n, from, to, 0);   
+                }
+                break;
+            }
+            cf += df;
+            cr += dr;
+        }
+    }
 }
 
 static void gen_rook(const Pos *p, int from, int white, const int dirs[][2], int dcount, Move *moves, int *n) {
@@ -243,6 +373,29 @@ static void gen_rook(const Pos *p, int from, int white, const int dirs[][2], int
 }
 
 static void gen_king(const Pos *p, int from, int white, Move *moves, int *n) {
+
+    
+    static const int dirs[8][2] = {
+        {1,0},{-1,0},{0,1},{0,-1},
+        {1,1},{1,-1},{-1,1},{-1,-1}
+    };
+
+    int from_row = from / 8;
+    int from_col = from % 8;
+
+    for (int i = 0; i < 8; i++) {
+        int to_row = from_row + dirs[i][1];
+        int to_col = from_col + dirs[i][0];
+
+        if (to_row < 0 || to_row > 7 || to_col < 0 || to_col > 7) continue;
+
+        int to = to_row * 8 + to_col;
+
+        char target = p->b[to];
+        if (target != '.' && is_white_piece(target) == white) continue;
+
+        add_move(moves, n, from, to, 0);
+    }
 
 }
 
