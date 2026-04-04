@@ -1,1 +1,1 @@
-I don't know how to get a folder in git so this is my best attempt
+Thought I was ready to add the code, not yet, it moves some squares before stalling, will try to get it finish tmr
