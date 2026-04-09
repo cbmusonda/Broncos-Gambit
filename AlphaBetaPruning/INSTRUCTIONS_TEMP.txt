@@ -1,0 +1,7 @@
+Thought I was ready to add the code, not yet, it moves some squares before stalling, will try to get it finish tmr
+
+Run AlphaBeta_Trial.c -> Open build.bat (to check if running = "Press any key to continue") -> Run UciBoardArena2.java -> change file paths accordingly to wherever you stored run.bat in ENGINE section of GUI -> Start button
+
+**File path depends on where you stored it, so change accordingly in UciBoardArena2.java
+AlphaBeta_Trial2.c = (will create a new exe file everytime if adding new changes to c file)
+(THIS VERSION RUNS ON WINDOWS ONLY)
