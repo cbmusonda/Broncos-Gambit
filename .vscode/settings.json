@@ -1,0 +1,4 @@
+{
+    "testMate.cpp.test.executables": "${workspaceFolder}/**/build/test_engine",
+    "cmake.sourceDirectory": "/Users/changwemusonda/Desktop/Broncos-Gambit/Sample Chess Project_Windows/Sample Chess Project"
+}

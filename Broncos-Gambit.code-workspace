@@ -1,0 +1,15 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "testMate.cpp.test.executables": [
+            "${workspaceFolder}/AlphaBetaPruning/build/test_engine",
+            "${workspaceFolder}/Sample Chess Project_Windows/Sample Chess Project/build/test_engine"
+        ],
+        "testMate.cpp.test.discovery": "auto",
+        "testMate.cpp.vsCodeOuputChannelTestResultsFormat": "gtest"
+    }
+}

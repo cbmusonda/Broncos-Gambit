@@ -223,6 +223,7 @@ static void print_bestmove(Move m){char a[3],b[3];index_to_sq(m.from,a);index_to
 /* ── Main ── */
 #define MAX_DEPTH 4
 
+#ifndef GTEST_MODE
 int main(void){
     init_zobrist();Pos pos;pos_start(&pos);
     u64 gh[MAX_HIST];int ghl=0;gh[ghl++]=hash_pos(&pos);
@@ -238,3 +239,4 @@ int main(void){
     }
     return 0;
 }
+#endif // GTEST_MODE
