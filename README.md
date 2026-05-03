@@ -2,21 +2,20 @@
 
 Hello there! :D
 
-This repository contains the code for our Chess Robot project, developed for the Broncos Gambit Championship as part of the ECE 4318.01 Software Engineering course at California State Polytechnic University, Pomona. Our Team Name is CFrenzy...
-This repository contains the code for our Chess Robot project, developed for the Broncos Gambit Championship as part of the ECE 4318.01 Software Engineering course at California State Polytechnic University, Pomona.
-
+This repository contains the code for our Chess Robot project, developed for the Broncos Gambit Championship as part of the ECE 4318.01 Software Engineering course at California State Polytechnic University, Pomona under Dr. Bryan Choi. Our Team Name is CFrenzy...
 
 
 Authors:
-cirena
-heba
-jessalin
-mariam
-christian
+Cirena Arabit
+Heba Hafez
+Jessalin Jiangkhov
+Mariam Nadeem
+Christian Ruelas
+Changwe Musonda
 
-Our Team Name is CFrenzy
 
 ## How to Use
+Multiple sets of engine codes have been tried and tested throughout a semester. This code was run on a Java UCI Chess Board running on the IntelliJ software with engine code in VS Code. In order to test the engines save the .exe files to your device and place two .bat files as oponents. 
 
 1. Clone this repository:
    ```bash
